@@ -1,4 +1,4 @@
-# 4loop_hw
+# 4loop_sw
 ##Synopsis
 
 This is the repository for the software of Asphalt, an application of the Team Four Loop during the Vertical Workshop 2016 ITESM & Intel. The hardware was implemented using HTML, JavaScript and CSS Language. 
