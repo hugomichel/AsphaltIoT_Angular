@@ -1,0 +1,47 @@
+<ion-view view-title="Profile">
+  <ion-content ng-class="{expanded:$scope.isExpanded}">
+    <div class="hero slide-up" style="background-image: url('img/profile_bg_benito.jpg');">
+      <div class="content">
+        <div class="avatar" style="background-image: url('img/profile_benito.jpg');"></div>
+        <h3><a class="light"> Michael Williams </a></h3>
+        <h4>mick_639</h4>
+      </div>
+    </div>
+    <div class="tabs tabs-dark tabs-icon-top static">
+      <a ui-sref="app.profileParking" class="tab-item">
+        <i class="icon ion-model-s"></i> Parking
+      </a>
+      <a ui-sref="app.profileSettings" class="tab-item">
+        <i class="icon ion-gear-a"></i> Settings
+      </a>
+    </div>
+    <h4 class="content padding double-padding-x">Add a favourite spot</h4>
+
+    <div id="location_list" >
+      Select a Parking Lot:
+      <form role="form">
+        <div class="form-group stats_form">
+          <select class="form-control" id="sel1" ng-model="mySelectLoc" ng-change="showSelectLocation(mySelectLoc)">
+            <option ng-repeat="loc in locations" >{{loc.$id}}</option>
+          </select>
+        </div>
+      </form>
+      <div id="manualData">
+        Select a Zone
+        <!-- Parent Zone -->
+        <div id="zone_list">
+          <form role="form">
+            <div class="form-group stats_form">
+              <select class="form-control" id="sel2" ng-model="mySelectPla" ng-change="showSelectPlace(mySelectPla)" ng-model="init">
+                <option ng-repeat="place in places" >{{place.$id}}</option>
+              </select>
+            </div>
+          </form>
+        </div>
+        <div id="favourite_text">
+          Favourite Zone Added!
+          <div id="favourite_zone"></div>
+        </div>
+        <button class="button_add" onclick="writeOnDiv()">+</button>
+      </ion-content>
+    </ion-view>

@@ -1,0 +1,32 @@
+<ion-view view-title="Profile">
+    <ion-content ng-class="{expanded:$scope.isExpanded}">
+        <div class="hero slide-up" style="background-image: url('img/profile_bg_benito.jpg');">
+            <div class="content">
+                <div class="avatar" style="background-image: url('img/profile_benito.jpg');"></div>
+                <h3><a class="light"> Michael Williams </a></h3>
+                <h4>mick_639</h4>
+            </div>
+        </div>
+        <div class="tabs tabs-dark tabs-icon-top static">
+            <a ui-sref="app.profileParking" class="tab-item">
+                <i class="icon ion-model-s"></i> Parking Lots
+            </a>
+<!--
+            <a ui-sref="app.profileSettings" class="tab-item">
+                <i class="icon ion-gear-a"></i> Settings
+            </a>
+-->
+        </div>
+        <h4 class="content padding double-padding-x">Your parking lots</h4>
+        <div class="list animate-fade-slide-in-right">
+            <a ui-sref="app.mapITESM" class="item item-icon-right">
+                <h2>ITESM GDA</h2>
+                <i class="icon ion-map muted"></i>
+            </a>
+            <a ui-sref="app.mapINTEL" class="item item-icon-right">
+                <h2>IOT PARKING LOT</h2>
+                <i class="icon ion-map muted"></i>
+            </a>
+        </div>
+    </ion-content>
+</ion-view>

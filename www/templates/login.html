@@ -1,16 +1,36 @@
 <ion-view view-title="Login" align-title="left">
     <ion-content style="background: url(img/fondoPaquito.jpg) center; background-size: cover;">
-        <div class="hero no-header flat">
 
-        </div>
         <div class="content">
             <h1><img src="img/logo0.png" alt="local" style="display: block;margin-left: auto;margin-right: auto;" ></h1>
             <h1><img src="img/nombre.png" alt="local" style="width:200px;height:80px;display: block;margin-left: auto;margin-right: auto;"></h1>
         </div>
-
-        <div class="padding">
-            <button ui-sref="app.Dashboard" class="button button-full button-assertive ink">Find Your ParkingLot</button>
+        <div class="list">
+            <ion-md-input placeholder="E-Mail" highlight-color="balanced" type="text" ng-model="user.email" ></ion-md-input>
+            <ion-md-input placeholder="Password" highlight-color="energized" type="password" ng-model="user.pass"></ion-md-input>
         </div>
-
+        <div class="row">
+<!--
+          <div class="col">
+            <button ui-sref="app.Dashboard" class="button button-small button-assertive ink">Find Your ParkingLot</button>
+          </div>
+-->
+          <div class="col">
+            <button  class="button button-block  button-assertive ink" ng-click="LogIn()">Log In</button>
+            <!-- ui-sref="app.Dashboard" -->
+          </div>
+          <div class="col">
+            <button  class="button button-block  button-assertive ink" ng-click="Register()">Register</button>
+            <!--ui-sref="app.Dashboard"-->
+          </div>
+        </div>
+        <!--
+        <div class="padding">
+          <button ui-sref="app.Dashboard" class="button button-small button-assertive ink">Find Your ParkingLot</button>
+          <button ui-sref="app.profile" class="button button-small button-assertive ink">profile</button>
+          <button ui-sref="app.gallery" class="button button-small button-assertive ink">Galerry</button>
+        </div>
+      -->
+        <BR>
     </ion-content>
 </ion-view>

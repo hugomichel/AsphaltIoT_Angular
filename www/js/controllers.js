@@ -3,7 +3,7 @@
 
 angular.module('starter.controllers', [])
 
-.controller('AppCtrl', function($scope, $ionicModal, $ionicPopover, $timeout) {
+.controller('AppCtrl', function($scope, $ionicModal, $ionicPopover, $timeout,$firebaseObject) {
     // Form data for the login modal
     $scope.loginData = {};
     $scope.isExpanded = false;
@@ -85,36 +85,174 @@ angular.module('starter.controllers', [])
             fabs[0].remove();
         }
     };
+
+    //AUTENTIFICANCION
+    //firebaseReference
+/*
+    $scope.rootUser = "https://letsparkiot.firebaseio.com/Users/";
+    $scope.root = "https://letsparkiot.firebaseio.com/";
+    var ref = new Firebase($scope.root);
+
+    //userData CHECK
+    var authData = ref.getAuth();
+    if (authData) {
+      console.log("User " + authData.uid + " is logged in with " + authData.provider);
+
+        $scope.UserData = {};
+
+        //Get Actual User
+        var getUser = function(){
+          var userRef = new Firebase($scope.root);
+          var authData = userRef.getAuth();
+          $scope.UserData.uid = authData.uid;
+        };
+        //Sacar datos del Usuario
+        setTimeout(getUser(),500);
+        console.log($scope.UserData.uid);
+        $scope.refUser = new Firebase($scope.rootUser + $scope.UserData.uid);
+        $scope.ref = new Firebase($scope.root);
+        console.log($scope.rootUser + $scope.UserData.uid);
+        $scope.email = $firebaseObject($scope.refUser.child('Email'));
+
+        $scope.email.$loaded().then(function () {
+            $scope.email = $scope.email.$value;
+        });
+    } else {
+      console.log("User is logged out");
+    }
+
+*/
+    //console.log($scope.email.$value);
+
 })
 
-.controller('LoginCtrl', function($scope, $timeout, $stateParams, ionicMaterialInk) {
+.controller('LoginCtrl', function($scope, $timeout, $stateParams, ionicMaterialInk,$ionicPopup, $state) {
+  //inicio
     $scope.$parent.clearFabs();
     $timeout(function() {
         $scope.$parent.hideHeader();
     }, 0);
     ionicMaterialInk.displayEffect();
+    //User data
+    $scope.user = {};
+    $scope.root = "https://letsparkiot.firebaseio.com/";
+    $scope.ref = new Firebase($scope.root);
+    $scope.uid;
+    //LogOut
+
+    $scope.ref.unauth();
+    var authData = $scope.ref.unauth();
+    if (authData) {
+      console.log("User " + authData.uid + " is logged in with " + authData.provider);
+    } else {
+      console.log("User is logged out");
+    }
+
+    $scope.Register = function(){
+      console.log($scope.user.email);
+
+      $scope.ref.createUser({
+        email    : $scope.user.email,
+        password : $scope.user.pass
+      }, function(error, userData) {
+        if (error) {
+          var alertPopup = $ionicPopup.alert({
+                title: 'Login failed!',
+                template: 'User already in use!'
+            });
+          console.log("Error creating user:", error);
+        } else {
+          console.log("Successfully created user account with uid:", userData.uid);
+          var alertPopup = $ionicPopup.alert({
+                title: 'Succesfully registered',
+            });
+          var ref2 = new Firebase($scope.root + "Users").child(userData.uid);
+          ref2.set({
+            Email:$scope.user.email,
+            Location: "",
+            Area: "",
+            Zone: ""
+          });
+          $scope.LogIn();
+        }
+      });
+
+
+
+
+
+      //$scope.ref.getAuth()
+      //console.log("Uid: " + $scope.ref.getAuth().uid);
+/*
+      var postsRef = $scope.ref.child("Users");
+      var newPostRef = postsRef.push();
+      newPostRef.set({
+        author: "hola",
+        title: "2"
+      });
+      var usersRef = $scope.ref.child("Users");
+      usersRef.set({
+        $uid: {
+          date_of_birth: "June 23, 1912",
+          full_name: "Alan Turing"
+        },
+        gracehop: {
+          date_of_birth: "December 9, 1906",
+          full_name: "Grace Hopper"
+        }
+      });
+*/
+
+    };
+
+    $scope.LogIn = function () {
+      $scope.ref.authWithPassword({
+        email    : $scope.user.email,
+        password : $scope.user.pass
+      }, function(error, authData) {
+        if (error) {
+          var alertPopup = $ionicPopup.alert({
+                title: 'Login failed!',
+                template: 'Please check your credentials!'
+            });
+          console.log("Login Failed!", error);
+        } else {
+          console.log("Authenticated successfully with payload:", authData);
+          $state.go('app.Dashboard');
+        }
+      });
+/*
+      ref.authWithPassword({
+        email    : $scope.user.email,
+        password : $scope.user.pass
+      }, authHandler);
+
+      var authData = ref.getAuth();
+      if (authData) {
+        console.log("User " + authData.uid + " is logged in with " + authData.provider);
+      } else {
+        console.log("User is logged out");
+      }
+
+      function authHandler(error, authData) {
+        if (error) {
+          console.log("Login Failed!", error);
+        } else {
+          console.log("Authenticated successfully with payload:", authData);
+        }
+      }
+      ref.authWithOAuthPopup("<provider>", authHandler);
+      ref.authWithOAuthRedirect("<provider>", authHandler);
+*/
+    };
+
+    $scope.Auth = function(){
+
+    }
+
 })
 
-.controller('FriendsCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
-    // Set Header
-    $scope.$parent.showHeader();
-    $scope.$parent.clearFabs();
-    $scope.$parent.setHeaderFab('left');
-
-    // Delay expansion
-    $timeout(function() {
-        $scope.isExpanded = true;
-        $scope.$parent.setExpanded(true);
-    }, 300);
-
-    // Set Motion
-    ionicMaterialMotion.fadeSlideInRight();
-
-    // Set Ink
-    ionicMaterialInk.displayEffect();
-})
-
-.controller('ProfileCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk) {
+.controller('ProfileCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk,$firebaseArray) {
     // Set Header
     $scope.$parent.showHeader();
     $scope.$parent.clearFabs();
@@ -137,31 +275,131 @@ angular.module('starter.controllers', [])
 
     // Set Ink
     ionicMaterialInk.displayEffect();
+
+    //userData
+    $scope.UserData = {};
+    $scope.ParkingData = {};
+    $scope.AreaData = {};
+    $scope.ZoneData = {};
+
+    //firebaseReference
+    $scope.rootUser = "https://letsparkiot.firebaseio.com/Users/";
+    $scope.root = "https://letsparkiot.firebaseio.com/";
+
+    //Get Actual User
+    var getUser = function(){
+      var userRef = new Firebase($scope.root);
+      var authData = userRef.getAuth();
+      $scope.UserData.uid = authData.uid;
+    };
+    //Sacar datos del Usuario
+    setTimeout(getUser(),500);
+    console.log($scope.UserData.uid);
+    $scope.refUser = new Firebase($scope.rootUser + $scope.UserData.uid);
+    $scope.ref = new Firebase($scope.root);
+    console.log($scope.rootUser + $scope.UserData.uid);
+
+
+    //Sacar Parkings
+    /*
+    $scope.locations = $firebaseArray($scope.root + "Parking");
+    $scope.places;
+    $scope.zones;
+
+    $scope.showSelectLocation = function(mySelect) {
+      location = mySelect;
+      $scope.places = $firebaseArray(ref.child(location));
+      console.log(location + " location");
+    }
+
+    $scope.showSelectPlace = function(mySelect) {
+      place = mySelect;
+      $scope.zones = $firebaseArray(ref.child(location).child(place));
+      console.log(place + " Place");
+    }
+*/
+    /////
+
+    $scope.ref.child("Parking").once("value", function(snapshot) {
+      // The callback function will get called twice, once for "fred" and once for "barney"
+      snapshot.forEach(function(childSnapshot){
+        $scope.ParkingData[childSnapshot.key()] = childSnapshot.val();
+        console.log(childSnapshot.key());
+      });
+
+
+
+      /*snapshot.forEach(function(childSnapshot) {
+        // key will be "fred" the first time and "barney" the second time
+        //$scope.ParkingData = childSnapshot.key();
+        //console.log($scope.ParkingData);
+        // childData will be the actual contents of the child
+        $scope.ParkingData = childSnapshot.val();
+        console.log(childSnapshot);
+      });*/
+    });
+
+    //$scope.ParkingData = $scope.refUser.child(location);
+    //console.log($scope.ParkingData);
+    //Sacar Zonas
+
+
+
+
 })
 
-.controller('ActivityCtrl', function($scope, $stateParams, $timeout, ionicMaterialMotion, ionicMaterialInk) {
+.controller('DashboardCtrl', function($scope, $firebaseArray,$state,$ionicPopup) {
+  $scope.showHeader();
+  //Prueba Identificación
+  var ref = new Firebase("https://letsparkiot.firebaseio.com/");
+  var authData = ref.getAuth();
+  if (authData) {
+    console.log("User " + authData.uid + " is logged in with " + authData.provider);
+  } else {
+    console.log("User is logged out");
+    var alertPopup = $ionicPopup.alert({
+          title: 'User not logged in',
+          template: 'Please Reconnect'
+      });
+    $state.go('app.login');
+  }
+  //Inicia Referencia
+      var location;
+      var place;
+
+      var ref= new Firebase("https://letsparkiot.firebaseio.com/Parking");
+
+      $scope.locations = $firebaseArray(ref);
+      $scope.places;
+      $scope.zones;
+
+
+      $scope.showSelectLocation = function(mySelect) {
+        location = mySelect;
+        $scope.places = $firebaseArray(ref.child(location).child("General"));
+        console.log(location + " location");
+      }
+
+      $scope.showSelectPlace = function(mySelect) {
+        place = mySelect;
+        $scope.zones = $firebaseArray(ref.child(location).child(place));
+        console.log(place + " Place");
+      }
+
+      $scope.auth = function(){
+        var ref = new Firebase("https://letsparkiot.firebaseio.com/");
+        var authData = ref.getAuth();
+        if (authData) {
+          console.log("User " + authData.uid + " is logged in with " + authData.provider);
+        } else {
+          console.log("User is logged out");
+        }
+      }
+
+    })
+    .controller('MapCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
     $scope.$parent.showHeader();
-    $scope.$parent.clearFabs();
-    $scope.isExpanded = true;
-    $scope.$parent.setExpanded(true);
-    $scope.$parent.setHeaderFab('right');
 
-    $timeout(function() {
-        ionicMaterialMotion.fadeSlideIn({
-            selector: '.animate-fade-slide-in .item'
-        });
-    }, 200);
-
-    // Activate ink for controller
-    ionicMaterialInk.displayEffect();
-})
-
-.controller('GalleryCtrl', function($scope, $stateParams, $timeout, ionicMaterialInk, ionicMaterialMotion) {
-    $scope.$parent.showHeader();
-    $scope.$parent.clearFabs();
-    $scope.isExpanded = true;
-    $scope.$parent.setExpanded(true);
-    $scope.$parent.setHeaderFab(false);
 
     // Activate ink for controller
     ionicMaterialInk.displayEffect();
@@ -174,62 +412,6 @@ angular.module('starter.controllers', [])
     });
 
 })
-
-.controller('DashboardCtrl_2', function($scope, $firebaseObject) {
-  $scope.showHeader();
-  //Firebase reference
-  var ref = new Firebase("https://letsparkiot.firebaseio.com/");
-  $scope.data = $firebaseObject(ref);
-  $scope.data.$loaded()
-  .then(function() {
-    console.log($scope.data);
-  })
-  .catch(function(err) {
-    console.error(err);
-  });
-
-  var ref2 = new Firebase("https://letsparkiot.firebaseio.com/");
-  ref2.once("value", function(snapshot) {
-    // The callback function will get called twice, once for "fred" and once for "barney"
-    snapshot.forEach(function(childSnapshot) {
-      // key will be "fred" the first time and "barney" the second time
-      var key = childSnapshot.key();
-      console.log(key);
-      // childData will be the actual contents of the child
-      var childData = childSnapshot.val();
-      console.log(childData);
-      return key;
-    });
-  });
-
-})
-
-.controller('DashboardCtrl', function($scope, $firebaseArray) {
-  $scope.showHeader();
-      var location;
-      var place;
-
-      var ref= new Firebase("https://letsparkiot.firebaseio.com");
-
-      $scope.locations = $firebaseArray(ref);
-      $scope.places;
-      $scope.zones;
-
-
-      $scope.showSelectLocation = function(mySelect) {
-        location = mySelect;
-        $scope.places = $firebaseArray(ref.child(location));
-        console.log(location + " location");
-      }
-
-      $scope.showSelectPlace = function(mySelect) {
-        place = mySelect;
-        $scope.zones = $firebaseArray(ref.child(location).child(place));
-        console.log(place + " Place");
-      }
-    })
-
-
 ;
 
 ;

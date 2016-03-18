@@ -1,62 +1,63 @@
-<ion-view view-title="Statistics">
+<ion-view view-title="Data" id="all">
   <ion-content ng-class="{expanded:$scope.isExpanded}">
-      <div id="container">
-        <div id="body">
+      <div id="body">
 
-          <div id="location_list" >
-            <form role="form">
-              <div class="form-group stats_form">
-                <select class="form-control" id="sel1" ng-model="mySelectLoc" ng-change="showSelectLocation(mySelectLoc)">
-                  <option ng-repeat="loc in locations" >{{loc.$id}}</option>
-                </select>
-              </div>
-            </form>
-
-
-            <div id="stats_list">
-              <form role="form">
-                <div class="form-group stats_form">
-                  <select class="form-control" id="sel2" ng-model="mySelectPla" ng-change="showSelectPlace(mySelectPla)">
-                    <option ng-repeat="place in places" >{{place.$id}}</option>
-                  </select>
-                </div>
-              </form>
-
+        <!-- Parking Lot -->
+        <div id="location_list" >
+          Select a Parking Lot:
+          <form role="form">
+            <div class="form-group stats_form">
+              <select class="form-control" id="sel1" ng-model="mySelectLoc" ng-change="showSelectLocation(mySelectLoc)">
+                <option ng-repeat="loc in locations" >{{loc.$id}}</option>
+              </select>
             </div>
-            <div id="stats_table" class="table-responsive">
 
-              <table class="table table-striped stats_table">
-                <thead class="stats_table_thead">
-                  <tr>
-                    <th>Zones</th>
-                    <th>Available Spaces</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr ng-repeat="zn in zones">
-                    <td >{{zn.$id}}</td>
-                    <td >{{zn.Capacity}}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
+          </form>
         </div>
 
-      </body>
+        <div id="buttons">
+          <br><br>
+          <button class="button_find_spot">Find me a spot</button>
+          <br><br>
+          <button class="button_find_spot" onclick="findMeASpot()">Data Table</button>
+        </div>
+
+        <div id="manual_data">
+          <!-- Child Zone -->
+          <div id="stats_table" class="table-responsive">
+
+            <table class="table table-striped stats_table">
+              <thead class="stats_table_thead">
+                <tr>
+                  <th>Zones</th>
+                  <th>Available Spaces</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="zn in places">
+                  <td >{{zn.$id}}</td>
+                  <td >{{zn.Capacity}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </body>
 
 
-      <!--<div class="hero slide-up" style="background-image: url('img/profile-bg.jpg');">
-      <div class="content">
-      <div class="avatar" style="background-image: url('img/daenerys.jpg');"></div>
-      <h3><a class="light">Daenerys Targaryen</a></h3>
-      <h4>dragon_mommy</h4>
-    </div>
+    <!--<div class="hero slide-up" style="background-image: url('img/profile-bg.jpg');">
+    <div class="content">
+    <div class="avatar" style="background-image: url('img/daenerys.jpg');"></div>
+    <h3><a class="light">Daenerys Targaryen</a></h3>
+    <h4>dragon_mommy</h4>
   </div>
-  <div class="tabs tabs-dark tabs-icon-top static">
-  <a ui-sref="app.activity" class="tab-item">
-  <i class="icon ion-arrow-graph-up-right"></i> Activity
+</div>
+<div class="tabs tabs-dark tabs-icon-top static">
+<a ui-sref="app.activity" class="tab-item">
+<i class="icon ion-arrow-graph-up-right"></i> Activity
 </a>
 <a ui-sref="app.friends" class="tab-item">
 <i class="icon ion-android-people"></i> Friends
