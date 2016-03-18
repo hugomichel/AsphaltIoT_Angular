@@ -382,6 +382,7 @@ angular.module('starter.controllers', [])
   //Inicia Referencia
       var location;
       var place;
+      var preference;
 
       var ref= new Firebase("https://letsparkiot.firebaseio.com/Parking");
 
@@ -400,6 +401,59 @@ angular.module('starter.controllers', [])
         place = mySelect;
         $scope.zones = $firebaseArray(ref.child(location).child(place));
         console.log(place + " Place");
+      }
+      /*Recommendation Algorithm*/
+      $scope.breadthWiseSearch = function(zone){ //zone String
+        jsref = new Firebase("https://letsparkiot.firebaseio.com/Parking/" + location + "/General" );
+        jsref.on("value", function(snapshot) {
+          
+          var data = snapshot.val();
+          var checking = [];
+          var visited = [];
+          var names = [];
+
+          checking.push(data[zone]);
+          visited.push(data[zone]);
+          names.push(zone);
+
+          while(checking.length > 0){
+
+            var actual = checking.shift();
+            var nActual = names.shift();
+
+            if (actual["Capacity"] != 0) { //CHECAR ESTA PARTE
+
+              preference = nActual;
+              return;
+
+            } else{
+
+              for (var i = 0; i < actual.Adjecent.length; i++) { //CHECAR
+              
+                var n = actual.Adjecent[i];
+                var contain = false; 
+
+                for(var j = 0; j < visited.length; j++){
+
+                  if (visited[i] === n){
+                    contain = true;
+                    break;
+                  }
+                }
+
+                if (!contain) {
+                  checking.push(data[n]);
+                  visited.push(data[n]);
+                  names.push(n);
+                }
+              }
+            }
+          }
+
+        }, function (errorObject) {
+          
+          console.log("The read failed: " + errorObject.code);
+        });
       }
 
       $scope.auth = function(){
